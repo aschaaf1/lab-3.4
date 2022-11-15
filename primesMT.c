@@ -1,5 +1,8 @@
 // Alan Schaaf
 // November 14, 2022
+//
+// this is a refactored version of my orignal submission in order to
+// remove any functions that are not used
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,29 +36,8 @@ static bool is_verbose = false;
 //intialize bits in array of data structs to 0, and init mutex
 void initialize_array(void);
 
-//intialize bits in array of data structs to 0 and init mutex, multi threaded!
-void * init(void *);
-
 //free mutex
 void free_mutex(void);
-
-//will change the bit located at the index passed as argument from 0 to 1
-uint32_t set_bit(uint32_t, int);
-
-//print the bit values
-void print_bits(uint32_t);
-
-//function that will mark a bit from array, based on the number that wish to mark
-void set_bit_array(int);
-
-//function that checks if a bit in array is already set
-bool check_bit(int);
-
-//function to print contents of bits in array for testing purposes
-void print_array(void);
-
-//function that intiates the sieve of eratosthenes
-void mark_prime(void);
 
 //function to find the low square root of number
 int find_root(int);
@@ -103,25 +85,19 @@ int main (int argc, char * argv[])
 	size = (limit/32) + 1;
 	array = malloc(size * sizeof(BitBlocks_t));
 	root = find_root(limit);
-	//intializing all bits in array to 0
-	initialize_array();
-	threads = malloc(num_threads * sizeof(pthread_t));
 
-	//using multi threading to initialize BitBlocks
-	//for (long i = 0; i < num_threads; ++i)
-	//{
-	//	pthread_create(&threads[i], NULL, init, (void *) i);
-	//}
-	//for (long i  = 0; i < num_threads; ++i)
-	//{
-	//	pthread_join(threads[i], NULL);
-	//}
+	//intializing all bits in array to 0
+	//intializing mutexs
+	initialize_array();
+	//allocating threads
+	threads = malloc(num_threads * sizeof(pthread_t));
 
 	if (is_verbose)
 	{
 		fprintf(stderr, "threads: %d\nupperbound: %d\n", num_threads, limit);
 	}
 
+	//creating threads
 	for (long i = 0, start = 3; i < num_threads; ++i, start += 2)
 	{
 		if (is_verbose)
@@ -130,6 +106,8 @@ int main (int argc, char * argv[])
 		}
 		pthread_create(&threads[i], NULL, sieve, (void *) start);
 	}
+
+	//joining threads
 	for (long i  = 0; i < num_threads; ++i)
 	{
 		if (is_verbose)
@@ -138,16 +116,14 @@ int main (int argc, char * argv[])
 		}
 		pthread_join(threads[i], NULL);
 	}
-
-	//printf("limit: %d size: %d root: %d\n", limit, size, root);
-
-	//mark_prime();
-	//print_array(array, size);
+	//printing all prime numbers
 	print_primes();
 
-	//free memory
+	//destroy mutexa
 	free_mutex();
+	//deallocate threads
 	free(threads);
+	//deallocating array of bit blocks
 	free(array);
 
 	exit(EXIT_SUCCESS);
@@ -167,19 +143,6 @@ void initialize_array(void)
 	//set_bit_array(1);
 }
 
-//intialize bits in array of data structs to 0 and init mutex, multi threaded!
-void * init(void * sid)
-{
-	long start = (long) sid;
-
-	for (long i = start; i < size; i += (num_threads))
-	{
-		array[i].bits = 0;
-		pthread_mutex_init(&array[i].mutex, NULL);
-	}
-	pthread_exit(EXIT_SUCCESS);
-}
-
 //free mutex
 void free_mutex(void)
 {
@@ -187,82 +150,6 @@ void free_mutex(void)
 	{
 		pthread_mutex_destroy(&array[i].mutex);
 	}
-}
-
-//will change the bit located at the index passed as argument from 0 to 1
-uint32_t set_bit(uint32_t data, int index)
-{
-	uint32_t mask = 0;
-	mask = 1 << (index % 32);
-	data = data | mask;	
-	return data;
-}
-
-//print the bit values
-void print_bits(uint32_t data)
-{
-	for (int i = 0; i < 32; ++i)
-	{
-		if (data & (1 << i))
-			printf("1");
-		else
-			printf("0");
-		if ((i+1) % 4 == 0)
-			printf(" ");
-	}
-	printf("\n");
-	
-}
-
-//function that will mark a bit from array, based on the number that wish to mark
-void set_bit_array(int num)
-{
-	//int index = num / 32;
-	//int bit_num = num % 32;
-	//uint32_t mask = 0;
-	
-	//mask = 1 << (num%32);
-	pthread_mutex_lock(&array[(num/32)].mutex);
-	//array[(num/32)].bits = array[(num/32)].bits | mask;
-	array[(num/32)].bits = array[(num/32)].bits | (1 << (num%32));
-	pthread_mutex_unlock(&array[(num/32)].mutex);
-}
-
-//function that checks if a bit in array is already set
-bool check_bit(int num)
-{
-	//int index = num / 32;
-	//int bit_num = num % 32;
-
-	if (array[num / 32].bits & (1 << (num % 32)))
-		return true;
-	else
-		return false;
-}
-
-//function to print contents of bits in array for testing purposes
-void print_array(void)
-{
-	for (int i = 0; i < size; ++i)
-	{
-		print_bits(array[i].bits);
-	}
-}
-
-//function that intiates the sieve of eratosthenes
-void mark_prime(void)
-{
-	for (int i = 2; i <= root; ++i)
-	{
-		//if number has not been marked composite
-		if (check_bit(i) == false)
-		{
-			for (int j = i+i; j < limit; j += i)
-			{
-				set_bit_array(j);
-			}
-		}
-	}	
 }
 
 //function to find the low square root of number
@@ -292,6 +179,7 @@ void print_primes(void)
 		}
 	}
 }
+
 //sieve function using multi threading
 void * sieve(void * sid)
 {
