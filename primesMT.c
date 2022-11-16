@@ -1,7 +1,7 @@
 // Alan Schaaf
-// November 14, 2022
+// November 15, 2022
 //
-// this is a refactored version of my orignal submission in order to
+// this is a revised version of my orignal submission in order to
 // remove any functions that are not used
 
 #include <stdio.h>
@@ -76,7 +76,6 @@ int main (int argc, char * argv[])
 				exit(0);
 				break;
 			case 'v':
-				fprintf(stderr, "VERBOSE ENABLED\n");
 				is_verbose = true;
 				break;
 		}
@@ -86,14 +85,14 @@ int main (int argc, char * argv[])
 	array = malloc(size * sizeof(BitBlocks_t));
 	root = find_root(limit);
 
-	//intializing all bits in array to 0
-	//intializing mutexs
+	//intializing BitBlock array
 	initialize_array();
 	//allocating threads
 	threads = malloc(num_threads * sizeof(pthread_t));
 
 	if (is_verbose)
 	{
+		fprintf(stderr, "VERBOSE ENABLED\n");
 		fprintf(stderr, "threads: %d\nupperbound: %d\n", num_threads, limit);
 	}
 
@@ -172,7 +171,6 @@ void print_primes(void)
 	printf("2\n");
 	for (int i = 3; i <= limit; i+=2)
 	{
-		//if (check_bit(i) == false)
 		if (!((array[i/32].bits & (1 << (i%32)))))
 		{
 			printf("%d\n", i);
@@ -189,10 +187,8 @@ void * sieve(void * sid)
 	{
 		for (int j = (i*2); j <= limit; j += i)
 		{
-			//if (!(check_bit(j)))
 			if (!((array[j/32].bits & (1 << (j%32)))))
 			{
-				//set_bit_array(j);
 				pthread_mutex_lock(&array[(j/32)].mutex);
 				array[(j/32)].bits = array[(j/32)].bits | (1 << (j%32));
 				pthread_mutex_unlock(&array[(j/32)].mutex);
