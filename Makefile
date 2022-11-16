@@ -3,10 +3,10 @@ CFLAGS = $(DEFINE) -Wall -Wshadow -Wunreachable-code -Wredundant-decls -Wmissing
 all: primesMT
 
 primesMT: primesMT.o
-	gcc $(CFLAGS) -o primesMT primesMT.o -pthread -O3
+	gcc $(CFLAGS) -o primesMT primesMT.o -pthread
 
 primesMT.o: primesMT.c
-	gcc $(CFLAGS) -c primesMT.c -pthread -O3
+	gcc $(CFLAGS) -c primesMT.c -pthread
 
 clean:
 	rm -f *.o *~ \#*
