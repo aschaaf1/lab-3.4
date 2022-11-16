@@ -118,7 +118,7 @@ int main (int argc, char * argv[])
 	//printing all prime numbers
 	print_primes();
 
-	//destroy mutexa
+	//destroy mutexs
 	free_mutex();
 	//deallocate threads
 	free(threads);
@@ -137,9 +137,6 @@ void initialize_array(void)
 		pthread_mutex_init(&array[i].mutex, NULL);
 
 	}
-	//initialize 0 and 1 to composite
-	//set_bit_array(0);
-	//set_bit_array(1);
 }
 
 //free mutex

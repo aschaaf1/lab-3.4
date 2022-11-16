@@ -1,14 +1,14 @@
-==3844369== Memcheck, a memory error detector
-==3844369== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==3844369== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==3844369== Command: ./primesMT -t 8 -u 10000
-==3844369== 
-==3844369== 
-==3844369== HEAP SUMMARY:
-==3844369==     in use at exit: 0 bytes in 0 blocks
-==3844369==   total heap usage: 18 allocs, 18 frees, 25,462 bytes allocated
-==3844369== 
-==3844369== All heap blocks were freed -- no leaks are possible
-==3844369== 
-==3844369== For lists of detected and suppressed errors, rerun with: -s
-==3844369== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==3866789== Memcheck, a memory error detector
+==3866789== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3866789== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3866789== Command: ./primesMT -t 8 -u 10000
+==3866789== 
+==3866789== 
+==3866789== HEAP SUMMARY:
+==3866789==     in use at exit: 0 bytes in 0 blocks
+==3866789==   total heap usage: 18 allocs, 18 frees, 25,462 bytes allocated
+==3866789== 
+==3866789== All heap blocks were freed -- no leaks are possible
+==3866789== 
+==3866789== For lists of detected and suppressed errors, rerun with: -s
+==3866789== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
